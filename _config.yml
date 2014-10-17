@@ -1,4 +1,4 @@
-baseurl: /StrayBirds
+baseurl: /
 markdown: redcarpet
 safe: false
 pygments: true
