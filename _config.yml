@@ -1,4 +1,4 @@
-baseurl: minixbeta.github.io/
+baseurl: 
 markdown: redcarpet
 safe: false
 pygments: true
