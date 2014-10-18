@@ -1,6 +1,7 @@
 ---
 layout: default
-title: Remove Nth Node From End of List 
+title: Remove Nth Node From End of List
+---
 
 
 ## 题目
