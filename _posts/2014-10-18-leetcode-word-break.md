@@ -24,5 +24,5 @@ Return true because "leetcode" can be segmented as "leet code".
 
 ### 方法二：迭代
 
-* canMake[i] 表示 s[:i+1] 是否可以由 dict 构成
-* canMake[i] = || (canMake[j] && s[j:i+1] in dict, 0 <= j < i) 
+* canMake[i] 表示 s[:i] 是否可以由 dict 构成
+* canMake[i] = || (canMake[j] && s[j:i) in dict, 0 <= j < i) 
