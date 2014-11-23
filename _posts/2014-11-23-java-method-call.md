@@ -55,15 +55,14 @@ call_stub() 返回一个函数指针，括号内的是调用这个函数时传�
 在虚拟机启动时，通过下面的调用栈：
 
 ```
-share\vm\runtime\init.cpp -> init_globals()
-  share\vm\interpreter\interpreter.cpp -> interpreter_init()
-    share\vm\interpreter\templateInterpreter.cpp -> initialize()
-      share\vm\interpreter\interpreter.cpp -> initialize()
-	  share\vm\interpreter\templateTable.cpp -> initialize()
-	  share\vm\code\stubs.cpp -> StubQueue
-	  cpu\x86\vm\templateInterpreter_x86_32.cpp -> InterpreterGenerator(StubQueue* code)
-	    share\vm\interpreter\templateInterpreter.cpp -> generate_all()
-		  share\vm\interpreter\interpreter.cpp -> generate_all()
+	jvm.dll!TemplateInterpreterGenerator::generate_all() 
+ 	jvm.dll!InterpreterGenerator::InterpreterGenerator(StubQueue * code)
+ 	jvm.dll!TemplateInterpreter::initialize()  
+ 	jvm.dll!interpreter_init() 
+ 	jvm.dll!init_globals()  
+ 	jvm.dll!Threads::create_vm(JavaVMInitArgs * args, bool * canTryAgain)  行 3424 + 0x5 字节
+ 	jvm.dll!JNI_CreateJavaVM(JavaVM_ * * vm, void * * penv, void * args)  行 5166 + 0xd 字节
+
 ```
 
 在 `generate_all` 中会生成大量常用代码片断的汇编代码，在执行时直接跳入之前生成好的汇编代码，这里的 `entry_point` 就是zerolocals 对应汇编代码的入口，通过 call 跳转过去。然后，就进入 [zerolocals 的汇编代码](https://github.com/codefollower/OpenJDK-Research/blob/master/hotspot/my-docs/interpreter/stub/method_entry_point_zerolocals.java)，其中最重要的是 
