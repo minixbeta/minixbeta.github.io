@@ -5,8 +5,6 @@ title: Java 中一个方法如何按照字节码依次执行
 
 本文从 Java 虚拟机的角度解释了 Java 中的一个方法如何按照字节码依次执行
 
-1. call_stub
-
 Java 中的方法调用，最终要落到 `hotspot\src\share\vm\runtime\javaCalls.cpp` 中的 `JavaCalls::call_helper` 函数：
 
 ```c++
@@ -51,7 +49,8 @@ call_stub() 返回一个函数指针，括号内的是调用这个函数时传�
 02660438  call        eax  ; 进入方法调用入口
 ```
 
-一个 Java 方法调用时，在虚拟机内部并不是直接按字节码顺序执行，在此之前要先通过 call_stub 进入一个入口函数，一般会是 zerolocals， zerolocals的汇编代码是在虚拟机启动的时候就已经生成好的。
+一个 Java 方法调用时，在虚拟机内部并不是直接按字节码顺序执行，在此之前要先通过 call_stub 进入一个入口函数，一般会是 zerolocals， zerolocals是一段汇编代码，在虚拟机启动的时候就已经生成好的，它的执行过程对应的 c++ 代码是 `InterpreterGenerator::generate_normal_entry` ，位于 `hotspot\src\cpu\x86\vm\templateInterpreter_x86_32.cpp`
+
 在虚拟机启动时，通过下面的调用栈：
 
 ```
