@@ -71,8 +71,9 @@ call_stub() 返回一个函数指针，括号内的是调用这个函数时传�
 0266C1A5  lea         esi,[esi+28h]  ; esi 指向方法中第一条字节码
 ```
 
-注意这里的 ebx 之前已经指向 method，现在通过 ebx+8 指向 ConstMethod，存入 esi，再通过 esi+28h 找到第一条字节码地址，随后就要
-跳转到第一条字节码对应的汇编指令入口
+注意这里的 ebx 之前已经指向 method，现在通过 ebx+8 指向 ConstMethod，存入 esi，再通过 esi+28h 找到第一条字节码地址，其中 28h 是 ConstMethod 的大小，内存中紧随其后的就是字节码。
+
+随后就要跳转到第一条字节码对应的汇编指令入口
 
 ```asm
 0266AB8D  movzx       ebx,byte ptr [esi]  ; 将第一条字节码内容存入 ebx
