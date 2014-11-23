@@ -40,7 +40,14 @@ void JavaCalls::call_helper(JavaValue* result, methodHandle* m, JavaCallArgument
 ```
 
 call_stub() 返回一个函数指针，括号内的是调用这个函数时传递过去的各种参数，在使用 visual studio 进行调试时，需要进入反汇编才能
-看到其中的执行过程，具体过程参见 [call_stub汇编代码注释](https://github.com/codefollower/OpenJDK-Research/blob/master/hotspot/my-docs/interpreter/stub/call_stub.java)。注意汇编中代码注释中栈中参数位置与上述C++代码参数位置的对应关系。在汇编代码中最为关键的是
+看到其中的执行过程，即单步调试到 `call_stub()`时：
+
+```c++
+  static CallStub call_stub()                              { return CAST_TO_FN_PTR(CallStub, _call_stub_entry); }
+```
+右击这一行代码，选择转到反汇编，然后再在汇编级别单步调试。
+
+具体代码注释参见 [call_stub汇编代码注释](https://github.com/codefollower/OpenJDK-Research/blob/master/hotspot/my-docs/interpreter/stub/call_stub.java)。注意汇编中代码注释中栈中参数位置与上述C++代码参数位置的对应关系。在汇编代码中最为关键的是
 
 ```asm
 02660430  mov         ebx,dword ptr [ebp+14h]  ; 将参数 method() 放入 ebx
