@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 编译器基础知识
+title: 龙书-编译器基础知识
 ---
 
 ## 编译器作用
