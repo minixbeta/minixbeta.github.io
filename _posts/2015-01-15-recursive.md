@@ -28,6 +28,7 @@ SICP 中使用了计算 n! 的两种方式来解释这个问题：
     (* n (factorial (- n 1)))))
 ```
 
+```
 factorial(6)
 = 6 * factorial(5) 
 = 6 * (5 * factorial(4) )
@@ -38,6 +39,7 @@ factorial(6)
 = 6 * (5 * 24)
 = 6 * 120
 = 720
+```
 
 从上面的代码及示例中可以看出，这个方法本质上是递归的，它需要记录从函数最上层到最底层路径上所有的状态，然后再反方向计算过去。
 
@@ -53,6 +55,7 @@ factorial(6)
                 (+ counter 1))))  
 ```
 
+```
 factorial(6)
 = fact-iter(1 1 6)
 = fact-iter(1 2 6)
@@ -61,6 +64,7 @@ factorial(6)
 = fact-iter(24 5 6)
 = fact-iter(120 6 6)
 = fact-iter(720 7 6)
+```
 
 从上面的代码及示例中可以看出，这个方法本质上是迭代的，它只需要记录当前状态(product counter max-count) 就行，从前向后算，一直
 到 counter 增加到 max-count 上为止。
