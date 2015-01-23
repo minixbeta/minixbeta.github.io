@@ -30,13 +30,16 @@
         </h1>
 {{ content }}
       </section>
-    </div>
-    
-    <div class="comments">
+      
+      <div class="comments">
         {% if page.comments %}
           {% include comments.ext %}
         {% endif %}
+      </div>
+      
     </div>
+    
+
     
     <footer>
       <p>Project maintained by <a href="https://github.com/minixbeta">minixbeta</a></p>
