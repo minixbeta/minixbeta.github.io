@@ -1,6 +1,7 @@
 ---
 layout: default
 title: 程序设计中的抽象
+comments: true
 ---
 
 SICP 的第一章初步介绍了与函数(procedure)相关的抽象。
