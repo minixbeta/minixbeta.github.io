@@ -1,6 +1,6 @@
 ---
 layout: default
-title: 程序设计中的抽象
+title: 程序设计中的函数抽象
 comments: true
 ---
 
