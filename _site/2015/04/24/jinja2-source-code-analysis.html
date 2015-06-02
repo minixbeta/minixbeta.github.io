@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>Jinja2 源代码分析 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    <h2>学习方式</h2>
+
+<p>从 JinJa 2.0 版本开始学习，之前的版本里有不少编译错误，测试用例也不全，可以先看比较完整的 2.0 版本，
+弄清楚主要思路，再看之前的提交过程。</p>
+
+<p><a href="https://github.com/mitsuhiko/jinja2/releases/tag/2.0">JinJa 2.0</a></p>
+
+<h2>概要</h2>
+
+<h3>JinJa2 简介</h3>
+
+<p>JinJa2 是一个 Python 实现的模板引擎，模板引擎的作用就是把一个 HTML 模板，以及一些环境变量，生成 HTML 页面。模板引擎的使用，
+可以使我们在 Web 开发中，将不变的部分（HTML 模板) 与变化的部分(环境变量）分开。HTML 模板中不仅支持对变量值进行替换，还支持
+if 语句，for 语句等。</p>
+
+<p>JinJa2 支持的特性有：</p>
+
+<ul>
+<li>变量</li>
+<li>函数</li>
+<li>包含</li>
+<li>条件包含</li>
+<li>循环</li>
+<li>求值</li>
+<li>赋值</li>
+<li>错误及异常</li>
+<li>i18n</li>
+<li>自然模板</li>
+<li>继承</li>
+</ul>
+
+<p>各种不同的模板引擎支持的特性对比，可以参考 <a href="http://en.wikipedia.org/wiki/Comparison_of_web_template_engines">Comparison of web template engines</a></p>
+
+<h3>目录概要</h3>
+
+<ul>
+<li>artwork: logo 文件</li>
+<li>docs: 文档, Sphinx 写成</li>
+<li>examples: 示例，基本使用及性能测试及基准测试</li>
+<li>ext: 扩展，对 Vim, Django, InlineGettext 的支持</li>
+<li>jinja2: 源代码</li>
+<li>scripts: pylint 的代码检查配置文件 pylintrc</li>
+<li>tests: 测试用例</li>
+<li>other files
+
+<ul>
+<li>AUTHORS: 作者列表</li>
+<li>CHANGES: 版本主要变化</li>
+<li>LICENCE: 开源协议</li>
+<li>THANKS: 致谢</li>
+<li>TODO: 未来工作</li>
+</ul></li>
+</ul>
+
+<h3>源代码概要</h3>
+
+<ul>
+<li><code>__init__.py</code>: 主模块说明，内部功能导出</li>
+<li>_speedups.c: C 语言加速模块</li>
+<li>compiler.py: Python 代码中的编译结点，生成 Python 代码</li>
+<li>constants.py: 常量</li>
+<li>debug.py: 调试接口，定位出错的位置，内容</li>
+<li>defaults.py: 默认过滤器和标签</li>
+<li>environment.py: 保存运行时信息及解析时间选项</li>
+<li>exceptions: 自定义异常</li>
+<li>ext.py: 自定义标签，i18n扩展，缓存扩展</li>
+<li>filters.py: 过滤器</li>
+<li>lexer.py: 词法分析器</li>
+<li>loaders.py: 类载入器</li>
+<li>nodes.py: 语法解析器扩展结点</li>
+<li>optimizer.py：优化 AST 求值过程</li>
+<li>parser.py: 模板语法分析器</li>
+<li>runtime.py: 运行时相关</li>
+<li>sandbox.py: 添加沙箱层</li>
+<li>tests.py: 测试中要使用的函数</li>
+<li>utils.py: 工具函数</li>
+<li>visitor.py: AST 节点访问器</li>
+</ul>
+
+<h2>核心问题</h2>
+
+<p>首先是模样引擎如何解决核心问题，然后是如何支持核心特性</p>
+
+<h3>模板引擎工作原理</h3>
+
+<p>核心问题是，给出静态的 HTML 模板，以及变量值，生成最终返回给客户端的 HTML 文件。</p>
+
+<p>html 模板
+<code>
+&lt;html&gt;
+    Hello \{\{ user }}
+&lt;/html&gt;
+</code></p>
+
+<p>变量
+<code>
+user = &#39;jack&#39;
+</code></p>
+
+<p>最终html文件</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;html&gt;
+    Hello jack
+&lt;/html&gt;
+</code></pre></div>
+<p>如何通过 Jinja2 实现上面的效果</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">from jinja2 import Environment
+
+
+print Template(&quot;&quot;&quot;\
+&lt;html&gt;
+    Hello \{\{ user }}
+&lt;/html&gt;
+&quot;&quot;&quot;).render(user=&quot;jack&quot;)
+</code></pre></div>
+<p>通过上面的例子，基本上可以明白模板引擎是在做什么，下面我们看看具体是怎么完成这一功能的。</p>
+
+<p>Jinja 会把 html 模板的代码编译成一段 Python 代码</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">jinja2.runtime</span> <span class="kn">import</span> <span class="n">LoopContext</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">TemplateReference</span><span class="p">,</span> <span class="n">Macro</span><span class="p">,</span> <span class="n">Markup</span><span class="p">,</span> <span class="n">TemplateRuntimeError</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">concat</span><span class="p">,</span> <span class="n">escape</span><span class="p">,</span> <span class="n">markup_join</span><span class="p">,</span> <span class="n">unicode_join</span>
+<span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="n">environment</span><span class="p">):</span>
+    <span class="n">l_user</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">0</span><span class="p">:</span> <span class="k">yield</span> <span class="bp">None</span>
+    <span class="k">yield</span> <span class="s">u&#39;&lt;html&gt;</span><span class="se">\n</span><span class="s">    Hello </span><span class="si">%s</span><span class="se">\n</span><span class="s">&lt;/html&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">l_user</span><span class="p">,</span> 
+    <span class="p">)</span>
+
+<span class="n">blocks</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">debug_info</span> <span class="o">=</span> <span class="s">&#39;1=8&amp;2=9&#39;</span>
+</code></pre></div>
+<p>然后调用这段 Python 代码中的 <code>root</code> 函数，其中 <code>context</code> 变量中存储着变量的值，即上面的例子中 <code>user=&quot;jack&quot;</code> 部分。</p>
+
+<h3>模板引擎核心问题实现细节</h3>
+
+<p>从上面的过程我们也可以看出，问题的关键就是怎么把那段 html 模板的代码转换为 Python 代码。JinJa 使用 environment.Environment.compile 函数，将 html 代码编译成 Python  代码， 其中当然涉及编译原理的词法分析， 语法分析。我们从最简单的例子开始，逐步体会一下 JinJa 如何将包含各种语法特性的 html 模板转化成 python 代码。</p>
+
+<p>html 模板源代码会依次经过 environment, parser, lexer 模块，最终的词法分析在 lexer.Lexer.tokeniter 函数中完成，它的功能就是将 html 模板源代码转化成 token 流，token 有不同的类型。</p>
+
+<p>最简单的只包含一个变量的模板开始。</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+    Hello \{\{ user }}
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div>
+<p>这段 html 模板构成的 token 流即为：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">(&#39;&lt;html&gt;\n    Hello &#39;, &#39;data&#39;), 
+
+(&#39;\{\{&#39;, &#39;variable_begin&#39;), 
+
+(&#39; &#39;, &#39;whitespace&#39;),
+
+(&#39;user&#39;, &#39;name&#39;), 
+
+(&#39; &#39;, &#39;whitespace&#39;), 
+
+(&#39;}}&#39;, &#39;variable_end&#39;), 
+
+(&#39;\n&lt;/html&gt;&#39;, &#39;data&#39;)
+</code></pre></div>
+<p>每个 token 都由 (值，类型) 构成。</p>
+
+<p>而 parser 模块会使用 lexer 模块得到的 token 流，进行语法分析，生成抽象语法树(AST)，并返回。语法分析部分最终在 parser.Parser.subparse 函数中完成。语法分析的最终结果得到了：</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">[</span><span class="n">Output</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">u&#39;&lt;html&gt;</span><span class="se">\n</span><span class="s">    Hello &#39;</span><span class="p">),</span> 
+                <span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="s">&#39;load&#39;</span><span class="p">),</span> 
+                <span class="n">TemplateData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">u&#39;</span><span class="se">\n</span><span class="s">&lt;/html&gt;&#39;</span><span class="p">)</span>
+              <span class="p">]</span>
+        <span class="p">)</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>然后environment.Environment.compile 函数再使用 compiler.generate 函数将 AST 转化为 Python 代码。转化为 Python 代码的最终函数为 compiler.CodeGenerator.visit_Template 函数。生成的 Python 代码即为：</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">jinja2.runtime</span> <span class="kn">import</span> <span class="n">LoopContext</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">TemplateReference</span><span class="p">,</span> <span class="n">Macro</span><span class="p">,</span> <span class="n">Markup</span><span class="p">,</span> <span class="n">TemplateRuntimeError</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">concat</span><span class="p">,</span> <span class="n">escape</span><span class="p">,</span> <span class="n">markup_join</span><span class="p">,</span> <span class="n">unicode_join</span>
+<span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="n">environment</span><span class="p">):</span>
+    <span class="n">l_user</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">0</span><span class="p">:</span> <span class="k">yield</span> <span class="bp">None</span>
+    <span class="k">yield</span> <span class="s">u&#39;&lt;html&gt;</span><span class="se">\n</span><span class="s">    Hello </span><span class="si">%s</span><span class="se">\n</span><span class="s">&lt;/html&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">l_user</span><span class="p">,</span> 
+    <span class="p">)</span>
+
+<span class="n">blocks</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">debug_info</span> <span class="o">=</span> <span class="s">&#39;1=8&amp;2=9&#39;</span>
+</code></pre></div>
+<p>前面几行是共用的，直接输出即可。</p>
+
+<p>下面这行 </p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">l_user</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="s">&#39;user&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p>通过 compiler.CodeGenerator.pull_locals 函数生成，如果发现 nodes 中有未定义的变量，就会使用 context 
+来解析，context 中就包含有 Template.render(user=&#39;jack&#39;) 中的 {&#39;user&#39;: &#39;jack&#39;} 信息。</p>
+
+<p>后面使用 <code>yield</code> 的那几行，在 <code>compiler.CodeGenerator.visit_Output</code> 中生成。它会依次访问 nodes 中的结点，生成相应的 python 代码。nodes 就是刚才语法分析生成的Output 中的 nodes：</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="p">[</span><span class="n">Output</span><span class="p">(</span><span class="n">nodes</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">TemplateData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">u&#39;&lt;html&gt;</span><span class="se">\n</span><span class="s">    Hello &#39;</span><span class="p">),</span> 
+                <span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;user&#39;</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="s">&#39;load&#39;</span><span class="p">),</span> 
+                <span class="n">TemplateData</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="s">u&#39;</span><span class="se">\n</span><span class="s">&lt;/html&gt;&#39;</span><span class="p">)</span>
+              <span class="p">]</span>
+        <span class="p">)</span>
+<span class="p">]</span>
+</code></pre></div>
+<p>TemplateData 类型的数据会直接进行拼接，Name 类型的会转化成类似 <code>&#39; %s &#39; % (luser)</code> 的形式。</p>
+
+<p>上面的例子只包含变量，下面我们看一下添加语法特性后的例子。</p>
+
+<p>这个例子中包含了变量及 if 语句。</p>
+
+<p>完整示例:</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Template</span>
+
+
+<span class="k">print</span> <span class="n">Template</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">&lt;html&gt;</span>
+<span class="s">    \{\</span><span class="si">% i</span><span class="s">f foo %}</span>
+<span class="s">        is foo</span>
+<span class="s">    \{\</span><span class="si">% e</span><span class="s">lse %}</span>
+<span class="s">        bar</span>
+<span class="s">    \{\</span><span class="si">% e</span><span class="s">ndif %}</span>
+<span class="s">&lt;/html&gt;</span>
+<span class="s">&quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">foo</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+</code></pre></div>
+<p>运行这个 python 程序，会输出：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">&lt;html&gt;
+
+        is foo
+
+&lt;/html&gt;
+</code></pre></div>
+<p>在这个例子中， html 模板是：</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+    \{\% if foo %}
+        is foo
+    \{\% else %}
+        bar
+    \{\% endif %}
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div>
+<p>生成的 python 代码是：</p>
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">jinja2.runtime</span> <span class="kn">import</span> <span class="n">LoopContext</span><span class="p">,</span> <span class="n">Context</span><span class="p">,</span> <span class="n">TemplateReference</span><span class="p">,</span> <span class="n">Macro</span><span class="p">,</span> <span class="n">Markup</span><span class="p">,</span> <span class="n">TemplateRuntimeError</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">concat</span><span class="p">,</span> <span class="n">escape</span><span class="p">,</span> <span class="n">markup_join</span><span class="p">,</span> <span class="n">unicode_join</span>
+<span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">environment</span><span class="o">=</span><span class="n">environment</span><span class="p">):</span>
+    <span class="n">l_foo</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="mi">0</span><span class="p">:</span> <span class="k">yield</span> <span class="bp">None</span>
+    <span class="k">yield</span> <span class="s">u&#39;&lt;html&gt;</span><span class="se">\n</span><span class="s">    &#39;</span>
+    <span class="k">if</span> <span class="n">l_foo</span><span class="p">:</span>
+        <span class="k">if</span> <span class="mi">0</span><span class="p">:</span> <span class="k">yield</span> <span class="bp">None</span>
+        <span class="k">yield</span> <span class="s">u&#39;</span><span class="se">\n</span><span class="s">        is foo</span><span class="se">\n</span><span class="s">    &#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="mi">0</span><span class="p">:</span> <span class="k">yield</span> <span class="bp">None</span>
+        <span class="k">yield</span> <span class="s">u&#39;</span><span class="se">\n</span><span class="s">        bar</span><span class="se">\n</span><span class="s">    &#39;</span>
+    <span class="k">yield</span> <span class="s">u&#39;</span><span class="se">\n</span><span class="s">&lt;/html&gt;&#39;</span>
+
+<span class="n">blocks</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">debug_info</span> <span class="o">=</span> <span class="s">&#39;1=8&amp;2=9&amp;4=14&amp;6=15&#39;</span>
+</code></pre></div>
+<p>我们可以清楚的看出，模板中的 if 语句就是被转化成了 python 中的 if 语句。对 html 的词法分析得到的 token 流为：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">(&#39;&lt;html&gt;\n &#39;, &#39;data&#39;),
+
+(&#39;\{\%&#39;, &#39;block_begin&#39;),
+
+(&#39; &#39;, &#39;whitespace&#39;),
+
+(&#39;if&#39;, &#39;name&#39;),
+
+(&#39; &#39;, &#39;whitespace&#39;),
+
+(&#39;foo&#39;, &#39;name&#39;),
+
+(&#39; &#39;, &#39;whitespace&#39;),
+
+(&#39;%}&#39;, &#39;block_end&#39;),
+
+(&#39;\n        is foo\n    &#39;, &#39;data&#39;),
+
+...
+</code></pre></div>
+<p>注意词法分析和语法分析并非独立进行，而是边语法分析，边词法分析，语法分析分析需要 token 时，就从 token 流中获取一个，如何获取是词法分析的事，获取之后用来做什么则由语法分析决定。语法分析最终得到：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">[
+    Output(nodes=[TemplateData(data=u&#39;&lt;html&gt;\n    &#39;)]), 
+
+    If(test=Name(name=&#39;foo&#39;, ctx=&#39;load&#39;), 
+        body= [Output(nodes=[TemplateData(data=u&#39;\n        is foo\n    &#39;)])], 
+        else_=[Output(nodes=[TemplateData(data=u&#39;\n        bar\n    &#39;)])]
+      ), 
+
+    Output(nodes=[TemplateData(data=u&#39;\n&lt;/html&gt;&#39;)])
+]
+</code></pre></div>
+<p>从这里，应该可以看出抽象语法树中“树”的影子了。生成 AST 后，就是如何将这个 AST 转换成 Python 代码了。</p>
+
+<p>我们不再继续展开，但是已经足够明白 JinJa 的核心部分在做什么：</p>
+
+<ul>
+<li>词法分析: HTML 模板 -&gt; token 流</li>
+<li>语法分析: token 流 -&gt; 抽象语法树</li>
+<li>代码生成: 抽象语法树 -&gt; Python 代码</li>
+</ul>
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

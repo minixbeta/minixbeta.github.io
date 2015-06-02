@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>Android 中非 UI 线程与 UI 线程通信方式 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    <p>由于更新 UI 是非线程安全的，所以对 UI 的更新操作只能在 UI 线程中做。但是有时候，我们的一些耗时操作必须在后台线程中执行，执行完
+之后，再更新 UI。这意味着后台操作要在后台线程中执行， UI 操作要在 UI 线程中执行。后台线程需要与UI线程通信，告诉他后台任务的执行
+状态，以便 UI 线程能够更新。</p>
+
+<p>在 Android 中，非 UI 线程可以通过消息队列机制或者异步任务机制，与 UI 线程通信。</p>
+
+<h2>消息队列机制</h2>
+
+<p>消息队列机制的基本思想是，非 UI 线程执行任务后向消息队列中发送消息， UI 线程从消息队列中取得消息，根据消息的内容更新 UI。</p>
+
+<p>具体的说，一个 UI 线程通过 Looper.prepare() 创建一个 Looper, 它在初始化时，会生成一个消息队列。同时，UI 线程还需要一个或者多个 
+Handler，每个 Handler 都与 UI 线程的 Looper 相关联，并且需要实现 handleMessage 方法。非 UI 线程会保存 Handler 的引用，当非 UI 
+线程需要与 UI 线程通信时，可以用 Handler 的引用向其关联的 Looper 的消息队列中发送一个消息，并在消息中保存当前 Handler 的引用。
+而对 Looper 来说，当它调用Looper.loop()启动后，就会不断从消息队列中取出消息，再通过消息中包含的 Handler，确定它的
+handleMessage 方法，调用这个方法更新 UI。</p>
+
+<h2>异步任务机制</h2>
+
+<p>Android 提供了 AsyncTask 类，通过继承这个类，可以创建一个后台任务，并且很容易更新 UI。</p>
+
+<p>AsyncTask 是一个抽象类，其中包含4个重要的方法，分别负责运行后台任务，或者更新 UI。</p>
+
+<ul>
+<li>onPreExecute
+在任务执行前，由 UI 线程中调用，这个方法通常用来做一些初始化工作，例如在 UI 中显示一个进度条</li>
+<li>doInBackgroud
+在后台线程中执行，在 onPreExecute 被调用后执行，可以执行一些长时间运行的后台任务，在这个方法中，还可以调用 publishProgress 方法
+通知 UI 线程当前的进度</li>
+<li>onProgressUpdate
+在 UI 线程中执行，在调用 pushlishProgress 方法后执行</li>
+<li>onPostExecute
+在 UI 线程中执行，在后台线程执行结束后这个方法被调用 </li>
+</ul>
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

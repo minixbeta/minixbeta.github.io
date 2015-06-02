@@ -82,7 +82,7 @@ JinJa2 支持的特性有：
 html 模板
 ```
 <html>
-    Hello {{ user }}
+    Hello \{\{ user }}
 </html>
 ```
 
@@ -107,7 +107,7 @@ from jinja2 import Environment
 
 print Template("""\
 <html>
-    Hello {{ user }}
+    Hello \{\{ user }}
 </html>
 """).render(user="jack")
 ```
@@ -144,7 +144,7 @@ html 模板源代码会依次经过 environment, parser, lexer 模块，最终�
 
 ```html
 <html>
-    Hello {{ user }}
+    Hello \{\{ user }}
 </html>
 ```
 
@@ -153,7 +153,7 @@ html 模板源代码会依次经过 environment, parser, lexer 模块，最终�
 ```
 ('<html>\n    Hello ', 'data'), 
 
-('{{', 'variable_begin'), 
+('\{\{', 'variable_begin'), 
 
 (' ', 'whitespace'),
 
@@ -236,11 +236,11 @@ from jinja2 import Template
 
 print Template("""\
 <html>
-    {% if foo %}
+    \{\% if foo %}
         is foo
-    {% else %}
+    \{\% else %}
         bar
-    {% endif %}
+    \{\% endif %}
 </html>
 """).render(foo = True)
 ```
@@ -259,11 +259,11 @@ print Template("""\
 
 ```html
 <html>
-    {% if foo %}
+    \{\% if foo %}
         is foo
-    {% else %}
+    \{\% else %}
         bar
-    {% endif %}
+    \{\% endif %}
 </html>
 ```
 
@@ -295,7 +295,7 @@ debug_info = '1=8&2=9&4=14&6=15'
 ```
 ('<html>\n ', 'data'),
 
-('{%', 'block_begin'),
+('\{\%', 'block_begin'),
 
 (' ', 'whitespace'),
 

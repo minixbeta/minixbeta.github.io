@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>JVMTI 中需要注意的几个问题 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    <h2>jni functions</h2>
+
+<p>在使用 JVMTI 的过程中，有一大系列的函数是在 <a href="http://docs.oracle.com/javase/7/docs/platform/jvmti/jvmti.html">JVMTI 的文档</a>中
+没有提及的，但在实际使用却是非常有用的。这就是 <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html">jni functions</a>.</p>
+
+<p>例如，在使用 SingleStep 函数时，</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void JNICALL
+SingleStep(jvmtiEnv *jvmti_env,
+            JNIEnv* jni_env,
+            jthread thread,
+            jmethodID method,
+            jlocation location)
+</code></pre></div>
+<p>我们就可以使用 jni_env 来调用 jni functions 中的一系列函数。例如：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">jclass mainClass = (*jni_env)-&gt;FindClass(jni_env, &quot;Foo&quot;);
+jfieldID fieldID = (*jni_env)-&gt;GetStaticFieldID(jni_env, mainClass, &quot;x&quot;, &quot;I&quot;);
+jint fieldValue = (*jni_env)-&gt;GetStaticIntField(jni_env, mainClass, fieldID);
+</code></pre></div>
+<p>通过使用 jni functions 就可以获取 Foo 类中的静态整型变量的值。</p>
+
+<p>另外在 <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/functions.html">jni functions 文档</a> 中还有大量易用的
+函数，都是在 JVMTI 文档中没有提及的，非常有用。</p>
+
+<h2>事件回调函数的线程安全</h2>
+
+<p>在 JVMTI 中有一系列回调函数，当使用 <code>SetEventNotificationMode</code> 和 <code>SetEventCallbacks</code> 设置了某个事件的回调函数后，Java 虚拟机
+在相应事件发生时，就会调用我们在 JVMTI 的 agent 中写的回调函数。</p>
+
+<p>千万注意：<code>多数回调函数需要保证线程安全</code>。</p>
+
+<p>也就是说，我们写的回调函数要保证是可重入的，不然的话，一个线程执行时进入了回调函数，还没执行完这个回调函数时，可能会被切换
+到另一线程，而另一线程也可能重新进入这个回调函数，执行完之后，又切换回前一线程时，才继续执行上一个没有执行完的回调函数。如果
+你使用了全局变量，就要格外注意上述情况可能导致的数据不一致问题。</p>
+
+<p>解决这个问题的最简单的办法就是使用 Raw Monitor。</p>
+
+<p>在 Agent_OnLoad 函数中创建一个 Raw Monitor：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">(*jvmti)-&gt;CreateRawMonitor(jvmti, &quot;singelStep&quot;, &amp;singleStepMonitorId);
+</code></pre></div>
+<p>然后，在回调函数的开始和结束时，使用这个 Raw Monitor 形成一个临界区，使得多个线程不能同时进入这个临界区:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">void JNICALL
+callbackSingleStep(
+jvmtiEnv *jvmti,
+JNIEnv* jni,
+jthread thread,
+jmethodID method,
+jlocation location) {
+
+(*jvmti)-&gt;RawMonitorEnter(jvmti, singleStepMonitorId);
+
+...
+
+(*jvmti)-&gt;RawMonitorExit(jvmti, singleStepMonitorId);
+}
+</code></pre></div>
+<h2>JVMTI agent 的调试</h2>
+
+<p>JVMTI 的 agent 如果出错，Java 虚拟机就会直接崩溃，同时生成一个 log，我们需要根据这个 log 猜测 agent 中哪里出现了错误，例如：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x000000006f99f004, pid=6760, tid=8140
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_31-b13) (build 1.8.0_31-b13)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.31-b07 mixed mode windows-amd64 compressed oops)
+# Problematic frame:
+# V  [jvm.dll+0x12f004]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+
+...
+
+Register to memory mapping:
+
+RAX=0x0000000000000000 is an unknown value
+RBX=0x000000005af15000 is a thread
+RCX=0x000000005af15000 is a thread
+RDX=0x00000000d707b160 is an oop
+java.lang.NoSuchFieldError 
+ - klass: &#39;java/lang/NoSuchFieldError&#39;
+RSP=0x000000005bcce510 is pointing into the stack for thread: 0x000000005af15000
+RBP=0x000000005bcceb80 is pointing into the stack for thread: 0x000000005af15000
+RSI={method} {0x0000000056b83b18} &#39;run&#39; &#39;()V&#39; in &#39;TestCaset1000$1&#39;
+RDI=0x0000000000000000 is an unknown value
+R8 =0x0000000000000000 is an unknown value
+R9 =0x0000000000000b80 is an unknown value
+R10=0xfefefefefefefeff is an unknown value
+R11=0x8080808080808080 is an unknown value
+R12=0x000000005af15000 is a thread
+R13=0x000000005ae58030 is an unknown value
+R14=0x0000000000000000 is an unknown value
+R15=0x00000000024388e0 is an unknown value
+
+
+Stack: [0x000000005bbd0000,0x000000005bcd0000],  sp=0x000000005bcce510,  free space=1017k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x12f004]
+C  [TraceCapture.dll+0x5086]  callbackSingleStep+0x466
+V  [jvm.dll+0x1a7389]
+V  [jvm.dll+0x1aa34c]
+V  [jvm.dll+0xa9c23]
+C  0x00000000025afddd
+
+...
+</code></pre></div>
+<p>其中 TraceCapture.dll 就是我写的 JVMTI agent，大概可以猜测到是  <code>callbackSingleStep+0x466</code> 这个地方出一错误，异常
+是 <code>java.lang.NoSuchFieldError</code>。那么怎么找到这个位置呢？</p>
+
+<p>这就涉及调试动态链接库文件了，调试的时候，在 callbackSingleStep 函数上加一个断点，调试时会停在这个断点上。
+此时，首先查看 callbackSingleStep 的首地址，在 visual studio 2013 中把鼠标放在函数名上就可以显示出来，然后将这个地址增加
+0x466，就找到了出错的位置的地址，再在 Call Stack 窗口中，右击 TraceCapture.dll 这一项进行反汇编，就进入了反汇编界面，
+找到相应地址对应的函数语句即可。</p>
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'minixbeta'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

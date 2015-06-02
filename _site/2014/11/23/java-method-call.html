@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>Java 中一个方法如何按照字节码依次执行 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    <p>本文从 Java 虚拟机的角度解释了 Java 中的一个方法如何按照字节码依次执行</p>
+
+<p>Java 中的方法调用，最终要落到 <code>hotspot\src\share\vm\runtime\javaCalls.cpp</code> 中的 <code>JavaCalls::call_helper</code> 函数：</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++"><span class="kt">void</span> <span class="n">JavaCalls</span><span class="o">::</span><span class="n">call_helper</span><span class="p">(</span><span class="n">JavaValue</span><span class="o">*</span> <span class="n">result</span><span class="p">,</span> <span class="n">methodHandle</span><span class="o">*</span> <span class="n">m</span><span class="p">,</span> <span class="n">JavaCallArguments</span><span class="o">*</span> <span class="n">args</span><span class="p">,</span> <span class="n">TRAPS</span><span class="p">);</span>
+</code></pre></div>
+<p>其中最为关键的部分在于 </p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++">  <span class="c1">// do call</span>
+  <span class="p">{</span> <span class="n">JavaCallWrapper</span> <span class="n">link</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">receiver</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">CHECK</span><span class="p">);</span>
+    <span class="p">{</span> <span class="n">HandleMark</span> <span class="n">hm</span><span class="p">(</span><span class="kr">thread</span><span class="p">);</span>  <span class="c1">// HandleMark used by HandleMarkCleaner</span>
+
+      <span class="n">StubRoutines</span><span class="o">::</span><span class="n">call_stub</span><span class="p">()(</span>
+        <span class="p">(</span><span class="n">address</span><span class="p">)</span><span class="o">&amp;</span><span class="n">link</span><span class="p">,</span>
+        <span class="c1">// (intptr_t*)&amp;(result-&gt;_value), // see NOTE above (compiler problem)</span>
+        <span class="n">result_val_address</span><span class="p">,</span>          <span class="c1">// see NOTE above (compiler problem)</span>
+        <span class="n">result_type</span><span class="p">,</span>
+        <span class="n">method</span><span class="p">(),</span>
+        <span class="n">entry_point</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">-&gt;</span><span class="n">parameters</span><span class="p">(),</span>
+        <span class="n">args</span><span class="o">-&gt;</span><span class="n">size_of_parameters</span><span class="p">(),</span>
+        <span class="n">CHECK</span>
+      <span class="p">);</span>
+
+      <span class="n">result</span> <span class="o">=</span> <span class="n">link</span><span class="p">.</span><span class="n">result</span><span class="p">();</span>  <span class="c1">// circumvent MS C++ 5.0 compiler bug (result is clobbered across call)</span>
+      <span class="c1">// Preserve oop return value across possible gc points</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">oop_result_flag</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kr">thread</span><span class="o">-&gt;</span><span class="n">set_vm_result</span><span class="p">((</span><span class="n">oop</span><span class="p">)</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">get_jobject</span><span class="p">());</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>
+<p>call<em>stub() 返回一个函数指针，括号内的是调用这个函数时传递过去的各种参数，在使用 visual studio 进行调试时，需要进入反汇编才能
+看到其中的执行过程，即单步调试到 `call</em>stub()`时：</p>
+<div class="highlight"><pre><code class="language-c++" data-lang="c++">  <span class="k">static</span> <span class="n">CallStub</span> <span class="nf">call_stub</span><span class="p">()</span>                              <span class="p">{</span> <span class="k">return</span> <span class="n">CAST_TO_FN_PTR</span><span class="p">(</span><span class="n">CallStub</span><span class="p">,</span> <span class="n">_call_stub_entry</span><span class="p">);</span> <span class="p">}</span>
+</code></pre></div>
+<p>右击这一行代码，选择转到反汇编，然后再在汇编级别单步调试。</p>
+
+<p>具体代码注释参见 <a href="https://github.com/codefollower/OpenJDK-Research/blob/master/hotspot/my-docs/interpreter/stub/call_stub.java">call_stub汇编代码注释</a>。注意汇编中代码注释中栈中参数位置与上述C++代码参数位置的对应关系。在汇编代码中最为关键的是</p>
+<div class="highlight"><pre><code class="language-asm" data-lang="asm"><span class="err">02660430</span>  <span class="nf">mov</span>         <span class="no">ebx</span><span class="p">,</span><span class="no">dword</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">ebp</span><span class="err">+</span><span class="mi">14</span><span class="no">h</span><span class="err">]</span>  <span class="err">;</span> <span class="err">将参数</span> <span class="no">method</span><span class="p">()</span> <span class="err">放入</span> <span class="no">ebx</span>
+<span class="err">02660433</span>  <span class="nf">mov</span>         <span class="no">eax</span><span class="p">,</span><span class="no">dword</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">ebp</span><span class="err">+</span><span class="mi">18</span><span class="no">h</span><span class="err">]</span>  <span class="err">;</span> <span class="err">将参数</span> <span class="no">entry_point</span> <span class="err">放入</span> <span class="no">eax</span>
+<span class="err">02660436</span>  <span class="nf">mov</span>         <span class="no">esi</span><span class="p">,</span><span class="no">esp</span>  
+<span class="mi">02660438</span>  <span class="no">call</span>        <span class="no">eax</span>  <span class="err">;</span> <span class="err">进入方法调用入口</span>
+</code></pre></div>
+<p>一个 Java 方法调用时，在虚拟机内部并不是直接按字节码顺序执行，在此之前要先通过 call<em>stub 进入一个入口函数，一般会是 zerolocals， zerolocals是一段汇编代码，在虚拟机启动的时候就已经生成好的，它的执行过程对应的 c++ 代码是 `InterpreterGenerator::generate</em>normal<em>entry<code>，位于</code>hotspot\src\cpu\x86\vm\templateInterpreter</em>x86_32.cpp`</p>
+
+<p>在虚拟机启动时，通过下面的调用栈：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">    jvm.dll!TemplateInterpreterGenerator::generate_all() 
+    jvm.dll!InterpreterGenerator::InterpreterGenerator(StubQueue * code)
+    jvm.dll!TemplateInterpreter::initialize()  
+    jvm.dll!interpreter_init() 
+    jvm.dll!init_globals()  
+    jvm.dll!Threads::create_vm(JavaVMInitArgs * args, bool * canTryAgain)  行 3424 + 0x5 字节
+    jvm.dll!JNI_CreateJavaVM(JavaVM_ * * vm, void * * penv, void * args)  行 5166 + 0xd 字节
+</code></pre></div>
+<p>在 <code>generate_all</code> 中会生成大量常用代码片断的汇编代码，在执行时直接跳入之前生成好的汇编代码，这里的 <code>entry_point</code> 就是zerolocals 对应汇编代码的入口，通过 call 跳转过去。然后，就进入 <a href="https://github.com/codefollower/OpenJDK-Research/blob/master/hotspot/my-docs/interpreter/stub/method_entry_point_zerolocals.java">zerolocals 的汇编代码</a>，其中最重要的是 </p>
+<div class="highlight"><pre><code class="language-asm" data-lang="asm"><span class="err">0266</span><span class="nf">C1A2</span>  <span class="no">mov</span>         <span class="no">esi</span><span class="p">,</span><span class="no">dword</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">ebx</span><span class="err">+</span><span class="mi">8</span><span class="err">]</span>  <span class="err">;</span> <span class="no">ebx</span> <span class="err">+</span> <span class="mi">8</span> <span class="err">指向</span> <span class="no">ConstMethod</span>
+<span class="err">0266</span><span class="nf">C1A5</span>  <span class="no">lea</span>         <span class="no">esi</span><span class="p">,</span><span class="err">[</span><span class="no">esi</span><span class="err">+</span><span class="mi">28</span><span class="no">h</span><span class="err">]</span>  <span class="err">;</span> <span class="no">esi</span> <span class="err">指向方法中第一条字节码</span>
+</code></pre></div>
+<p>注意这里的 ebx 之前已经指向 method，现在通过 ebx+8 指向 ConstMethod，存入 esi，再通过 esi+28h 找到第一条字节码地址，其中 28h 是 ConstMethod 的大小，内存中紧随其后的就是字节码。</p>
+
+<p>随后就要跳转到第一条字节码对应的汇编指令入口</p>
+<div class="highlight"><pre><code class="language-asm" data-lang="asm"><span class="err">0266</span><span class="nf">AB8D</span>  <span class="no">movzx</span>       <span class="no">ebx</span><span class="p">,</span><span class="no">byte</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">esi</span><span class="err">]</span>  <span class="err">;</span> <span class="err">将第一条字节码内容存入</span> <span class="no">ebx</span>
+<span class="err">0266</span><span class="nf">AB90</span>  <span class="no">jmp</span>         <span class="no">dword</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">ebx</span><span class="p">*</span><span class="mi">4</span><span class="err">+</span><span class="mi">5</span><span class="no">B436030h</span><span class="err">]</span>  <span class="err">;</span> <span class="err">跳转到第一条字节码对应的汇编指令入口</span>
+</code></pre></div>
+<p><code>5B436030h</code> 是一个表的起始地址，每四个字节代码一个字节码的汇编指令入口，所以通过 <code>[ebx*4+5B436030h]</code> 可以找到 ebx 对应的汇编
+代码入口。执行完一条字节码内容后，esi 为加1，然后 esi 会指向方法中的第二条字节码，第一条字节码汇编代码的最后，会再次执行类似下面的代码： </p>
+<div class="highlight"><pre><code class="language-asm" data-lang="asm"><span class="err">024</span><span class="nf">E8157</span>  <span class="no">movzx</span>       <span class="no">ebx</span><span class="p">,</span><span class="no">byte</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">esi</span><span class="err">+</span><span class="mi">3</span><span class="err">]</span>  <span class="err">;</span> <span class="err">将下一条字节码内容存入</span> <span class="no">ebx</span>
+<span class="err">024</span><span class="nf">E815B</span>  <span class="no">add</span>         <span class="no">esi</span><span class="p">,</span><span class="mi">3</span>  <span class="err">;</span> <span class="err">设置下一字节码位置</span>
+<span class="err">024</span><span class="nf">E815E</span>  <span class="no">jmp</span>         <span class="no">dword</span> <span class="no">ptr</span> <span class="err">[</span><span class="no">ebx</span><span class="p">*</span><span class="mi">4</span><span class="err">+</span><span class="mi">5</span><span class="no">B438430h</span><span class="err">]</span>   <span class="err">;</span> <span class="err">跳转到下一条字节码对应的汇编指令入口</span>
+</code></pre></div>
+<p>跳转到下一条字节码对应的汇编入口。 注意为 esi 增加了 3，是因为当前字节码占用了 3 个字节。注意跳转到下一条字节码对应的汇编指令
+入口，不一定就直接执行了字节码的内容，也可能中间再加入一些检测，例如进入安全点 <code>call        InterpreterRuntime::at_safepoint</code>，然后才真正执行字节码对应的汇编代码。</p>
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>
