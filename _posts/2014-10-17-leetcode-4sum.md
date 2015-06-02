@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: 4Sum
+category: 技术
 ---
 
 ## 题目 

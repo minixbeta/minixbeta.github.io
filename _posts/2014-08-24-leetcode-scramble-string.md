@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: LeetCode:Scramble String
+category: 技术
 ---
 
 ## 题目

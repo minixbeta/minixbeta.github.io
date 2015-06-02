@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Java 中一个方法如何按照字节码依次执行
+category: 技术
 ---
 
 本文从 Java 虚拟机的角度解释了 Java 中的一个方法如何按照字节码依次执行

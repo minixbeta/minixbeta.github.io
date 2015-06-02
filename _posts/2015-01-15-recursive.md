@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: 对递归的理解
+category: 技术
 ---
 
 

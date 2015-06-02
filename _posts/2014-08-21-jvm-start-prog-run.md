@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Java虚拟机的启动与程序的运行
+category: 技术
 ---
 
 这篇文章是从 OpenJDK 源代码的角度讲当我们运行了 

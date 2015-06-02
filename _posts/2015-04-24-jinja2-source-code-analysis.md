@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Jinja2 源代码分析
+category: 技术
 ---
 
 ## 学习方式

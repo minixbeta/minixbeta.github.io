@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Remove Nth Node From End of List
+category: 技术
 ---
 
 

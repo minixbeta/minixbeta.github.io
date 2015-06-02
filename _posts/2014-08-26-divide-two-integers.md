@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Divide Two Integers
+category: 技术
 ---
 
 

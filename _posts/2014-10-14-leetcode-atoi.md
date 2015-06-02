@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: String To Integer
+category: 技术
 ---
 
 ## 题目

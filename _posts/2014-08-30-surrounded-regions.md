@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Surrounded Regions
+category: 技术
 ---
 
 ## 题目

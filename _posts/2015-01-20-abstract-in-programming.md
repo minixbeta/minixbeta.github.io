@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: post
 title: 程序设计中的函数抽象
 comments: true
+category: 技术
 ---
 
 SICP 的第一章初步介绍了与函数(procedure)相关的抽象。

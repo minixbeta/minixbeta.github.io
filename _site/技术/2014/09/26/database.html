@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>数据库知识要点 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    
+    <div class="article article-post">
+    <h2 class="title">数据库知识要点</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">26 Sep 2014</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="//navigations/categories.html#技术-ref" >技术</a></span>
+    </div>
+    <h2>范式</h2>
+
+<h3>第一范式(1NF)</h3>
+
+<p>数据库中的每个属性都包含一个原子性数据，不可再分割，不可包含多个值。</p>
+
+<p>例如，下面几个就包含了 <strong>非原子性</strong> 数据。</p>
+
+<p>下面这个例子，id 为 3 时，number 中包含了两个数据</p>
+
+<p>| id | number |
+|----|--------|
+| 1  | 210 |
+| 3  | 320 860 |</p>
+
+<p>又例如, 下面的表中，地址包含了街道号和街道名</p>
+
+<p>|name|address|
+|----|-------|
+|tom| 59 N. Ajax Rapids |</p>
+
+<h3>第二范式(2NF)</h3>
+
+<p>第二范式首先要满足第一范式，其次要求没有部分函数依赖。部分函数依赖是指，非主键的列依赖于组合主键的某个部分，但不是完全
+依赖于组合主键。</p>
+
+<p>例如 </p>
+
+<p>| id | course | name | score |
+|----|--------|------|-------|
+| 1  |  math  | kay  | 100   |</p>
+
+<p>假如上面这个表中，(id, course) 为组合主键，那么这个表不满足第二范式，因为 name 仅仅依赖于组合主键中的 id.</p>
+
+<h3>第三范式(3NF)</h3>
+
+<p>第三范式首先要满足第二范式，其次要求没有传递函数依赖。传递依赖是指任何非键列与另一个非键列有关联。</p>
+
+<p>例如 </p>
+
+<p>| name | enemy<em>id | enemy</em>name |
+|------|----------|------------|
+| tom | 1 | jack |</p>
+
+<p>name 是主键，但是非主键的 enemy<em>id 的改变会造成 enemy</em>name 的改变，因此，表中存在传递函数依赖。不满足第三范式。</p>
+
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="//%E6%8A%80%E6%9C%AF/2014/09/22/http.html" rel="bookmark">&laquo;&nbsp;HTTP 协议要点</a>
+        
+        
+        <a class="next" href="//%E6%8A%80%E6%9C%AF/2014/09/26/os.html" rel="bookmark">操作系统知识要点&nbsp;&raquo;</a>
+        
+    </nav>
+    <div class="comment">
+        
+            
+        
+    </div>
+</div>
+
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'minixbeta'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/%E8%AF%BB%E4%B9%A6/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

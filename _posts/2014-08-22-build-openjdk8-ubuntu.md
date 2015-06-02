@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: 在Ubuntu 12.04 上编译 openjdk8
+category: 技术
 ---
 
 

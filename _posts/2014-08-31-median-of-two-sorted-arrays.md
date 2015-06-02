@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Median of Two Sorted Arrays 
+category: 技术
 ---
 
 

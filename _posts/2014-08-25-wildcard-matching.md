@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Wildcard Matching 
+category: 技术
 ---
 
 ## 题目

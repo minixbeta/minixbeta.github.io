@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: 我的 Android 学习之路
+category: 技术
 ---
 
 简单回顾一下 Android 学习的过程

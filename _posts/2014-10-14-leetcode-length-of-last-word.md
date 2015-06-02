@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Length of Last Word 
+category: 技术
 ---
 
 ## 题目 

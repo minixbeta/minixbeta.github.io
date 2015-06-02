@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Largest Rectangle in Histogram
+category: 技术
 ---
 
 

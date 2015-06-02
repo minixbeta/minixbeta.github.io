@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Merge Intervals
+category: 技术
 ---
 
 

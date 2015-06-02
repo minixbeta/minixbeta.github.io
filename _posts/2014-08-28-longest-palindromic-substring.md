@@ -1,6 +1,7 @@
 ---
-layout: default
-title: Longest Palindromic Substring 
+layout: post
+title: Longest Palindromic Substring
+category: 技术
 ---
 
 ## 题目 

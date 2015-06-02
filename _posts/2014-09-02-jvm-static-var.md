@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Java 虚拟机内部类静态字段的初始化与访问
+category: 技术
 ---
 
 

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>Java 十万个为什么 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    
+    <div class="article article-post">
+    <h2 class="title">Java 十万个为什么</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">16 Sep 2014</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="//navigations/categories.html#技术-ref" >技术</a></span>
+    </div>
+    <h2>为什么要使用接口</h2>
+
+<ul>
+<li>接口有利于代码复用
+代码复用的关键是将变化的地方与不变的地方分离，这样，不变的地方就会得到复用。我们可以将变化的地方抽象成一个接口，这样所有实现
+这个接口的类，就都可以使用不变地方的代码。</li>
+</ul>
+
+<p>例如 Java 中的排序算法，算法的步骤是不变的，变化的是元素之间的比较方式，我们可以
+将比较方式抽象成一个接口，接口中包含一个比较方法。这样，所有实现这个接口的类，都必须实现这个比较方法，之后，他们就可以复用
+排序算法。接口在这里就像排序算法与其它类型之间的契约，你实现这个接口，我就让你使用我的功能。在其它编程语言中，没有接口的概念，
+但是同样会使用某种方式，实现代码的利用，例如 C 语言，排序时，需要提供一个函数指针，指向一个可以比较大小的函数。Python中，可以将
+比较函数作为参数，传递给排序函数。</p>
+
+<p>又例如回调函数的使用，回调函数就是在一个事件发生时，要调用的函数。在GUI编程中，我们只需要为按钮添加一个事件响应函数，这个按钮被点击时，就会调用我们的函数。我们不需要编写其它代码，其它
+代码都是可以复用的，框架知道按钮点击时要调用一个函数，但是不知道这个函数具体内容。具体内容我们是知道的。这其实也是将变与不变分离
+的方式。在Java中，使用接口就可以实现回调。在其它编程语言中，使用函数指针也可以实现回调。</p>
+
+<ul>
+<li>接口有利于解耦
+前面说的代码复用，用抽象类也能实现，那为什么还要用接口呢？如果使用抽象类，那么所有需要排序的类都要继承这个抽象类，由于 Java 中没有
+多继承，所以这些类就不能继承其它类。而使用接口就不会有这种问题。接口实际上降低了类与类之间的耦合关系，只需要实现几个方法，不进入
+继承体系的时候，就没必要去继承。 </li>
+</ul>
+
+<h2>为什么要使用内部类</h2>
+
+<ul>
+<li>内部类可以访问外部类中的数据<br>
+例如迭代器的实现，就是通过内部类，它可以访问外部类，在外部类的数据上迭代，也有自己的私有变量，从而可以得到不同状态的迭代器。</li>
+<li>内部类可以对其它类隐藏起来<br></li>
+<li>可以实现匿名类<br>
+就一个字，方便！就定义一个对象，就没必要声明一个类了。</li>
+</ul>
+
+<h2>为什么使用栈式指令集</h2>
+
+<p>栈式指令集简洁，不必指定源与地址，编译器易实现。不受机器寄存器数目影响，容易移植。但所有操作都需要通过栈，需要更多的
+load/store, 这意味着更多的指令分派与内存访问。</p>
+
+<p>寄存器型数据访问快，利于优化程序运行速度。但代码长度会变长。</p>
+
+<h2>为什么需要反射</h2>
+
+<p>反射提供了在运行时动态操作类的能力，例如，根据类的名称加载类，创建类的实例，分析类中的域，方法，参数，构造器。</p>
+<div class="highlight"><pre><code class="language-java" data-lang="java">    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testReflect</span><span class="o">(</span><span class="n">String</span> <span class="n">className</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">ClassNotFoundException</span><span class="o">,</span>
+            <span class="n">InstantiationException</span><span class="o">,</span> <span class="n">IllegalAccessException</span> <span class="o">{</span>
+
+        <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">rfClass</span> <span class="o">=</span> <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="n">className</span><span class="o">);</span>
+        <span class="n">Object</span> <span class="n">rfObj</span> <span class="o">=</span> <span class="n">rfClass</span><span class="o">.</span><span class="na">newInstance</span><span class="o">();</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Create rfObj by &quot;</span> <span class="o">+</span> <span class="n">rfObj</span><span class="o">.</span><span class="na">getClass</span><span class="o">());</span>
+
+        <span class="n">Class</span><span class="o">&lt;?&gt;</span> <span class="n">fooClass</span> <span class="o">=</span> <span class="n">rfClass</span><span class="o">;</span>
+
+        <span class="cm">/* get public fields */</span>
+        <span class="n">Field</span><span class="o">[]</span> <span class="n">fields</span> <span class="o">=</span> <span class="n">fooClass</span><span class="o">.</span><span class="na">getFields</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Field</span> <span class="n">fd</span> <span class="o">:</span> <span class="n">fields</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">fd</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+        <span class="o">}</span>
+
+        <span class="cm">/* get public method, include extends */</span>
+        <span class="n">Method</span><span class="o">[]</span> <span class="n">methods</span> <span class="o">=</span> <span class="n">fooClass</span><span class="o">.</span><span class="na">getMethods</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Method</span> <span class="n">md</span> <span class="o">:</span> <span class="n">methods</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">md</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&quot; paramsN: &quot;</span>
+                    <span class="o">+</span> <span class="n">md</span><span class="o">.</span><span class="na">getParameterCount</span><span class="o">());</span>
+        <span class="o">}</span>
+
+        <span class="cm">/* get all methods, exclude extends methods */</span>
+        <span class="n">Method</span><span class="o">[]</span> <span class="n">declaredMethods</span> <span class="o">=</span> <span class="n">fooClass</span><span class="o">.</span><span class="na">getDeclaredMethods</span><span class="o">();</span>
+        <span class="k">for</span> <span class="o">(</span><span class="n">Method</span> <span class="n">md</span> <span class="o">:</span> <span class="n">declaredMethods</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">md</span><span class="o">.</span><span class="na">getName</span><span class="o">()</span> <span class="o">+</span> <span class="s">&quot;is public:&quot;</span>
+                    <span class="o">+</span> <span class="n">Modifier</span><span class="o">.</span><span class="na">isPublic</span><span class="o">(</span><span class="n">md</span><span class="o">.</span><span class="na">getModifiers</span><span class="o">()));</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div>
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="//%E6%8A%80%E6%9C%AF/2014/09/09/java-tips.html" rel="bookmark">&laquo;&nbsp;Java Tips</a>
+        
+        
+        <a class="next" href="//%E6%8A%80%E6%9C%AF/2014/09/18/why-java-no-generic-array.html" rel="bookmark">Java中为什么不允许直接创建泛型数组&nbsp;&raquo;</a>
+        
+    </nav>
+    <div class="comment">
+        
+            
+        
+    </div>
+</div>
+
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'minixbeta'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/%E8%AF%BB%E4%B9%A6/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

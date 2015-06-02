@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Python 性能优化
+category: 技术
 ---
 
 最近将之前用 Python 写的一个工具进行了性能优化，把一些心得写下来。

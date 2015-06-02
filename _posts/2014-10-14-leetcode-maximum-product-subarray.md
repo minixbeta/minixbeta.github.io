@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Maximum Product Subarray
+category: 技术
 ---
 
 ## 题目 

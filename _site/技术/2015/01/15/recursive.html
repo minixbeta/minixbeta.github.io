@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+         **
+         * Auther:      掌心
+         * Contact:     http://www.zhanxin.info
+         * Create:      2013.08.10
+         * Theme Name:  Kunka
+         * Authorize:   BY-NC-SA
+         **
+        -->
+        <meta charset="utf-8">
+        <title>对递归的理解 - 飞鸟集</title>
+        <!-- meta -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="generator" content="Jekyll" />
+        <meta name="author" content="minixbeta" />
+        <meta name="description" content="人生到处知何似，应似飞鸿踏雪泥" />
+        <meta name="keywords" content="" />
+        <!-- atom -->
+        <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="/atom.xml" />
+        <link rel="shortcut icon" href="http://jekyllrb.com/favicon.png" type="image/x-icon" />
+        <!-- font-awesome -->
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Spirax' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/themes/kunka/css/syntax.css">
+        <link rel="stylesheet" href="/themes/kunka/css/main.css">
+        
+    </head>
+    <body>
+        <div class="head fn-clear">
+            <div class="header">
+                <h1 class="logo">
+                    <a href="/"><i class="icon-anchor"></i></a>
+                </h1>
+                <nav class="nav">
+                    <ul>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/index.html">
+                                首页
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/categories.html">
+                                分类目录
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/archives.html">
+                                文章归档
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/contact.html">
+                                联系我
+                            </a>
+                            
+                        </li>
+                        
+                        
+                        
+                        <li class="nav-item ">
+                            <a href="/navigations/links.html">
+                                友情链接
+                            </a>
+                            
+                        </li>
+                        
+                    </ul>
+                </nav>
+                <div class="follow">
+                    
+                    <a href="/atom.xml" target="_blank"><i class="icon-rss"></i></a>
+                    
+                    <a href="http://weibo.com" target="_blank"><i class="icon-weibo"></i></a>
+                    
+                    <a href="http://renren.com" target="_blank"><i class="icon-renren"></i></a>
+                    
+                    <a href="http://github.com" target="_blank"><i class="icon-github-alt"></i></a>
+                    
+                    <a href="http://twitter.com" target="_blank"><i class="icon-twitter"></i></a>
+                    
+                    <a href="http://google.com" target="_blank"><i class="icon-google-plus"></i></a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="contain fn-clear">
+            <div class="container fn-clear">
+                <div class="main">
+                    
+    <div class="article article-post">
+    <h2 class="title">对递归的理解</h2>
+    <div class="info">
+        <span class="info-title"><i class="icon-calendar"></i> Published: </span>
+        <span class="info-date">15 Jan 2015</span>
+        <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
+        <span class="info-link"><a href="//navigations/categories.html#技术-ref" >技术</a></span>
+    </div>
+    <p>今天看了 SICP 上关于递归的一个讨论。明白了一个道理：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">形式上是递归的不等于本质上也是递归的。
+</code></pre></div>
+<p>如果一个函数形式上是递归的，即他调用了自己。不等于这个函数在本质上是递归的，有可能这个函数在本质上是迭代的。</p>
+
+<p>对于一个本质上是递归的函数，递归深度增加时，需要记录之前路径上所有的状态，也就是说内存的增长也是线性的。
+对于一个本质上是迭代的函数，虽然形式上也是递归的，但是这种递归属于“尾递归”。这类函数，在递归深度增加时，本质上不需要内存也线性增长，而只需要固定数量的内存记录下当前的状态就行。这样实现的“尾递归”，其实就可以去除语言中所需要的 <code>for</code>, <code>while</code> 等用于迭代的语法糖。</p>
+
+<p>但是，一些程序设计语言在实现时，会将所有递归都实现成内存随着递归深度增加而增长的形式。不过像 Scheme 这样的语言就不会这样实现。所以我们会听过函数式编程中，尾递归会以迭代的形式实现，递归深度增加时，不会爆栈。道理就在这里。</p>
+
+<p>SICP 中使用了计算 n! 的两种方式来解释这个问题：</p>
+
+<p>方法一：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">(define (factorial n)
+  (if (= n 1)
+    1
+    (* n (factorial (- n 1)))))
+</code></pre></div><div class="highlight"><pre><code class="language-text" data-lang="text">factorial(6)
+= 6 * factorial(5) 
+= 6 * (5 * factorial(4) )
+= ... = 6 * (5 * (4 * (3 * (2 * (factorial(1))))))
+= 6 * (5 * (4 * (3 * (2 * (1)))))
+= 6 * (5 * (4 * (3 * 2)))
+= 6 * (5 * (4 * 6))
+= 6 * (5 * 24)
+= 6 * 120
+= 720
+</code></pre></div>
+<p>从上面的代码及示例中可以看出，这个方法本质上是递归的，它需要记录从函数最上层到最底层路径上所有的状态，然后再反方向计算过去。</p>
+
+<p>方法二：</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">(define (factorial n)
+  (fact-iter 1 1 n))
+(define (fact-iter product counter max-count)
+  (if (&gt; counter max-count)
+    product
+    (fact-iter  (* counter product)
+                (+ counter 1))))  
+</code></pre></div><div class="highlight"><pre><code class="language-text" data-lang="text">factorial(6)
+= fact-iter(1 1 6)
+= fact-iter(1 2 6)
+= fact-iter(2 3 6)
+= fact-iter(6 4 6)
+= fact-iter(24 5 6)
+= fact-iter(120 6 6)
+= fact-iter(720 7 6)
+</code></pre></div>
+<p>从上面的代码及示例中可以看出，这个方法本质上是迭代的，它只需要记录当前状态(product counter max-count) 就行，从前向后算，一直
+到 counter 增加到 max-count 上为止。</p>
+
+<p>对应到我们平时所用的非函数式语言，方法一其实是用递归实现，方法二是用 for 或者 while 迭代实现的，只不过在 Scheme 里，迭代也用递归的形式表达，但是解释器在实现时，本质上还是进行一个迭代的过程。</p>
+
+    <nav class="article-previous fn-clear">
+        
+        <a class="prev" href="//%E6%8A%80%E6%9C%AF/2014/12/13/what-should-a-programmer-learn.html" rel="bookmark">&laquo;&nbsp;程序员都需要学习什么</a>
+        
+        
+        <a class="next" href="//%E8%AF%BB%E4%B9%A6/2015/01/17/are-your-lights-on.html" rel="bookmark">你的灯亮着吗&nbsp;&raquo;</a>
+        
+    </nav>
+    <div class="comment">
+        
+            
+        
+    </div>
+</div>
+
+
+                    
+                        <div id="disqus_thread"></div>
+ <script type="text/javascript">
+     /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+     var disqus_shortname = 'minixbeta'; // required: replace example with your forum shortname
+
+     /* * * DON'T EDIT BELOW THIS LINE * * */
+     (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+ </script>
+ <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+                    
+                </div>
+                <div class="aside">
+                    <div class="aside-contact">
+                        <h4 class="title">About me</h4>
+                        <div class="det fn-clear">
+                            <div class="det-image">
+                                <img src="https://avatars.githubusercontent.com/minixbeta" />
+                            </div>
+                            <div class="det-text">
+                                <p>我是 minixbeta</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Recent Posts</h4>
+                        <ul class="list">
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/06/01/python-profiling.html" title="Python 性能优化" rel="bookmark">Python 性能优化</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/04/24/jinja2-source-code-analysis.html" title="Jinja2 源代码分析" rel="bookmark">Jinja2 源代码分析</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/03/15/jvmti-notes.html" title="JVMTI 中需要注意的几个问题" rel="bookmark">JVMTI 中需要注意的几个问题</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/01/24/sequences-as-conventional-interface.html" title="将列表作为通用的操作接口" rel="bookmark">将列表作为通用的操作接口</a></li>
+                            
+                                <li><a href="/%E8%AF%BB%E4%B9%A6/2015/01/24/netflix.html" title="网飞传奇" rel="bookmark">网飞传奇</a></li>
+                            
+                                <li><a href="/%E6%8A%80%E6%9C%AF/2015/01/24/data-abstract.html" title="数据抽象" rel="bookmark">数据抽象</a></li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="aside-item">
+                        <h4 class="title">Links</h4>
+                        <ul class="list">
+                            
+                                
+                                    
+                                    <li><a href="http://www.zhanxin.info" title="掌心" target="_blank">掌心</a></li>
+                                    
+                                    <li><a href="http://jekyllrb.com" title="Jekyll" target="_blank">Jekyll</a></li>
+                                    
+                                    <li><a href="http://www.zhanxin.info/themes.html" title="Jekyll Theme" target="_blank">Jekyll Theme</a></li>
+                                    
+                                
+                            
+                                
+                            
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="foot">
+            <div class="footer">
+                <p>Copyright 2013. All rights reserved. Powered by <a href="http://jekyllrb.com" target="_blank">Jekyll</a>, Design by <a href="http://www.zhanxin.info" target="_blank">zhanxin.info</a>.</p>
+            </div>
+        </div>
+        <script type="text/javascript" src="https://lib.sinaapp.com/js/jquery/1.8.3/jquery.min.js"></script>
+        
+    </body>
+</html>

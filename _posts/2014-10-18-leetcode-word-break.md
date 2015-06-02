@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Word Break
+category: 技术
 ---
 
 ## 题目 

@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: 程序员都需要学习什么
+category: 技术
 ---
 
 ## 程序设计语言

@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Palindrome Number
+category: 技术
 ---
 
 ## 题目

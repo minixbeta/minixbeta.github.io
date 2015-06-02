@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Java中为什么不允许直接创建泛型数组
+category: 技术
 ---
 
 ## 失败的方式 

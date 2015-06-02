@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: post
 title: JVMTI 中需要注意的几个问题
 comments: true
+category: 技术
 ---
 
 ## jni functions

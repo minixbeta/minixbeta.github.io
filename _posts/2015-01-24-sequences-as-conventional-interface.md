@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: post
 title: 将列表作为通用的操作接口
 comments: true
+category: 技术
 ---
 
 以前我一直不太理解，为什么在 Python 和 Haskell 中有一些函数专门用来处理列表，比如 filter, map 什么的。在学习了 SICP

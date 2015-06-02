@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Java 类加载机制
+category: 技术
 ---
 
 ## 加载过程

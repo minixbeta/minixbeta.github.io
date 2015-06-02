@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Android 中非 UI 线程与 UI 线程通信方式
+category: 技术
 ---
 
 由于更新 UI 是非线程安全的，所以对 UI 的更新操作只能在 UI 线程中做。但是有时候，我们的一些耗时操作必须在后台线程中执行，执行完

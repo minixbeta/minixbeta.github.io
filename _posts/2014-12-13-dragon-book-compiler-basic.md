@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: 龙书-编译器基础知识
+category: 技术
 ---
 
 ## 编译器作用

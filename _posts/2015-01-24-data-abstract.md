@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: post
 title: 数据抽象
 comments: true
+category: 技术
 ---
 
 SICP 接下来讲述了数据抽象的思想。

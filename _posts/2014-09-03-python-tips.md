@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Python 中需要注意的问题
+category: 技术
 ---
 
 

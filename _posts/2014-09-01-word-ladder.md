@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Word Ladder
+category: 技术
 ---
 
 

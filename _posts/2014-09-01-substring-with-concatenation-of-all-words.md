@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Substring with Concatenation of All Words
+category: 技术
 ---
 
 ## 题目

@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: Maximal Rectangle 
+category: 技术
 ---
 
 ## 题目 
