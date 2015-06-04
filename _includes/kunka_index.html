@@ -9,7 +9,7 @@
             <span class="info-title"><i class="icon-calendar"></i> Published: </span>
             <span class="info-date">{{ post.date | date_to_string }}</span>
              <span class="info-title"><i class="icon-folder-open"></i> Category: </span>
-            <span class="info-link"><a href="{{ site.url }}/navigations/categories.html#{{ post.category }}-ref" >{{ post.category }}</a></span>
+            <span class="info-link"><a href="{{ site.baseurl }}/navigations/categories.html#{{ post.category }}-ref" >{{ post.category }}</a></span>
         </div>
     </div>
 {% endfor %}
