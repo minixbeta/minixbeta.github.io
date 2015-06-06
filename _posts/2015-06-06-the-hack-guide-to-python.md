@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Python 项目中需要注意哪些地方
-categories : [技术，Python]
+category : 技术
 comments: true
 ---
 
