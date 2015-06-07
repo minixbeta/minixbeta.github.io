@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Python 项目中需要注意哪些地方
+title: 开始一个 Python 项目时需要注意哪些问题
 category : 技术
 comments: true
 ---
+本文介绍了一个完整的 Python 项目涉及的 Python 版本选择，项目结构，版本号及编码风格。
 
 ## 项目相关
-
 ### Python 版本选择
 
 必须支持 Python 2.7，如果想让项目在未来也可用，需要支持 Python 3.3 及以上
