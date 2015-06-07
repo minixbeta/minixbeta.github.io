@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 开始一个 Python 项目时需要注意哪些问题
+title: THGP-Python 项目的开始
 category : 技术
 comments: true
 ---
