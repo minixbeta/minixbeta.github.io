@@ -22,3 +22,13 @@ comments: true
   * 维护活跃
   * 是否与流行的 linux 发行版一起打包
   * API 兼容保证
+
+## API变化
+修改 API 后，要在文档中记录：
+ * 新的接口
+ * 废除的旧接口
+ * 如何升级到新接口
+
+管理 API 变化的一些有用工具：
+ * Sphinx 的 `deprecated` 标记
+ * 使用 warnings.warn 在旧接口中发出警告，并使用 `-W all` 在执行时给出警告 或者 `-W error` 将警告变为错误
