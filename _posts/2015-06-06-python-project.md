@@ -50,3 +50,7 @@ N[.N]+[{a|b|c|rc}N][.postN][.devN]
 ### 编码风格
 
 Python 社区提出了 PEP8 标准，对编码风格进行规范，使用自动化工具 pep8 进行检查
+
+### 文档
+
+Python 文档格式的事实标准是 [reStructuredTex](http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html)，即 reST。[Sphinx](http://sphinx-doc.org/) 是处理这一格式最常用的工具。
