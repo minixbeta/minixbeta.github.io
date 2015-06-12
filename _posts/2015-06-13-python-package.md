@@ -90,7 +90,7 @@ pip install -i https://testpyp.python.org/pypi foo
 ```
 
 ## 正式分发
-正式分发时，在 `~/.ppirc` 中添加 `pypi` 节：
+正式分发时，在 `~/.pypirc` 中添加 `pypi` 节：
 
 ```
 [pypi]
