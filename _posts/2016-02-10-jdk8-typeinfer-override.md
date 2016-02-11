@@ -5,7 +5,6 @@ category: 技术
 comments: true
 ---
 
-
 首先从一个例子开始：
 
 下面这段代码，在 JDK6u30 中可以正常工作，但是在 JDK8u65 中会运行失败，提示类型转换错误，ClassCastException。
@@ -13,6 +12,7 @@ comments: true
 ```
 Exception in thread "main" java.lang.ClassCastException: java.lang.String cannot be cast to [C 
 ```
+
 
 我看了一下字节码，泛型函数推出的返回值都是 Object。然而 JDK8 中调用重载过的函数时，选择了 `String valueOf(char data[])`，本来应该选择 `String.valueOf(Object obj)`，JDK6就是这么做的，为什么到 JDK8 反而选择了一个错误的函数呢？ 
 
